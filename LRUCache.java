@@ -33,21 +33,27 @@ public class LRUCache {
 	
 	//Function to add data.
 	boolean add(int key, TickerData d) {
-		
-		//Check if there is room in the cache.
-		if (this.numofElements < this.cachesize) {
-			this.cache.put(key, d);
-			this.lru.add(d);
-			this.numofElements++;
+		try {
+			//Check if there is room in the cache.
+			if (this.numofElements < this.cachesize) {
+				this.cache.put(key, d);
+				this.lru.add(d);
+				this.numofElements++;
+			}
+			//Otherwise we have to make room. Apply (LRU).
+			else {
+				TickerData head = this.lru.remove();
+				this.cache.remove(head.id);
+				this.cache.put(key, d);
+				this.lru.add(d);
+			}
+			return true;
 		}
-		//Otherwise we have to make room. Apply (LRU).
-		else {
-			TickerData head = this.lru.remove();
-			this.cache.remove(head.id);
-			this.cache.put(key, d);
-			this.lru.add(d);
+		catch (Exception e) {
+			//Something has caused the cache to fail, let user know and return false.
+			System.out.println("cache failure");
+			return false;
 		}
-		return true;
 	}
 	
 	//Function to retrieve data.
